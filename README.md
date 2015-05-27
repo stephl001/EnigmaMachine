@@ -37,6 +37,6 @@ The final stop is the lampboard, where the plugboard output is connected to the 
 
 The Enigma machine operator notes down the output letter and then enters the next letter in the message, and so on for every letter in the message.
 
-Reference: The text above was taken from [the following site][enigma ref]
+__Reference: The text above was taken from [the following site][enigma ref]__
 [enigma ref]: http://www.reddit.com
 ----------
