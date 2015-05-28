@@ -70,7 +70,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EnigmaMachine\EnigmaMachine.csproj">
+    <ProjectReference Include="..\EnigmaMachine\EnigmaMachine.csproj">
       <Project>{fbf843e4-24f5-4032-a510-68db91304e0c}</Project>
       <Name>EnigmaMachine</Name>
     </ProjectReference>
