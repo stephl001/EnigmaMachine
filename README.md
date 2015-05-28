@@ -1,3 +1,14 @@
+# Enigma Machine
+![alt text](http://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/EnigmaMachineLabeled.jpg/768px-EnigmaMachineLabeled.jpg "")
+
+An Enigma machine was any of several electro-mechanical rotor cipher machines used in the twentieth century for enciphering and deciphering secret messages. Enigma was invented by the German engineer Arthur Scherbius at the end of World War I.[1] Early models were used commercially from the early 1920s, and adopted by military and government services of several countries, most notably Nazi Germany before and during World War II.[2] Several different Enigma models were produced, but the German military models are the most commonly recognised.
+
+German military messages enciphered on the Enigma machine were first broken by the Polish Cipher Bureau, beginning in December 1932. This success was a result of efforts by three Polish cryptologists, Marian Rejewski, Jerzy Różycki and Henryk Zygalski, working for Polish military intelligence. Rejewski reverse-engineered the device, using theoretical mathematics and material supplied by French military intelligence. Subsequently the three mathematicians designed mechanical devices for breaking Enigma ciphers, including the cryptologic bomb. From 1938 onwards, additional complexity was repeatedly added to the Enigma machines, making decryption more difficult and requiring further equipment and personnel—more than the Poles could readily produce.
+
+On 25 July 1939, in Warsaw, the Poles initiated French and British military intelligence representatives into their Enigma-decryption techniques and equipment, including Zygalski sheets and the cryptologic bomb, and promised each delegation a Polish-reconstructed Enigma. The demonstration represented a vital basis for the later British continuation and effort.[3] During the war, British cryptologists decrypted a vast number of messages enciphered on Enigma. The intelligence gleaned from this source, codenamed "Ultra" by the British, was a substantial aid to the Allied war effort.[4]
+
+Though Enigma had some cryptographic weaknesses, in practice it was German procedural flaws, operator mistakes, failure to systematically introduce changes in encipherment procedures, and Allied capture of key tables and hardware that, during the war, enabled Allied cryptologists to succeed.
+
 ## How Enigma Machines Work
 The underlying principle of an Enigma machine cipher is that of letter substitution, meaning that each letter of our plaintext (undeciphered message) is substituted by another letter.
 
