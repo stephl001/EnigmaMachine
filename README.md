@@ -51,3 +51,4 @@ The Enigma machine operator notes down the output letter and then enters the nex
 __Reference: The text above was taken from [the following site][enigma ref]__
 [enigma ref]: http://www.reddit.com
 ----------
+[Rotors Specifications](https://github.com/stephl001/EnigmaMachine/wiki/Rotors-Specifications)
