@@ -15,16 +15,8 @@ namespace EnigmaMachine.Stephane
         public char[] Notches { get; private set; }
     }
 
-    public sealed class Rotor
+    public sealed class Rotor : LetterMapper
     {
-        public enum MappingDirection
-        {
-            RightToLeft,
-            LeftToRight
-        };
-
-        private const int AlphabetLength = 26;
-
         private static readonly IDictionary<string, RotorDefinition> RotorDefinitions = new Dictionary<string, RotorDefinition>
         {
             {"I", new RotorDefinition("EKMFLGDQVZNTOWYHXUSPAIBRCJ", new [] {'Q'})},
@@ -35,31 +27,23 @@ namespace EnigmaMachine.Stephane
             {"VI", new RotorDefinition("JPGVOUMFYQBENHZRDKASXLICTW", new [] {'M','Z'})},
             {"VII", new RotorDefinition("NZJHGRCXMYSWBOUFAIVLPEKQDT", new [] {'M','Z'})},
             {"VIII", new RotorDefinition("FKQHTLXOCBJSPDZRAMEWNIUYGV", new [] {'M','Z'})},
+            {"Reflector A", new RotorDefinition("EJMZALYXVBWFCRQUONTSPIKHGD", new char[] {})},
+            {"Reflector B", new RotorDefinition("YRUHQSLDPXNGOKMIEBFZCWVJAT", new char[] {})},
+            {"Reflector C", new RotorDefinition("FVPJIAOYEDRZXWGCTKUQSBNMHL", new char[] {})},
             {"ETW", new RotorDefinition("ABCDEFGHIJKLMNOPQRSTUVWXYZ", new char[] {})}
         };
 
-        private readonly string _mapping;
         private readonly char[] _notches;
-        private readonly int _offset;
-
+        
         private Rotor(RotorDefinition def, char offset)
+            : base(def.Mappings, offset)
         {
-            _mapping = def.Mappings;
             _notches = def.Notches;
-            _offset = offset - 'A';
         }
 
         public static Rotor Create(string type, char offset = 'A')
         {
             return new Rotor(RotorDefinitions[type], offset);
-        }
-
-        public char GetMappedLetter(char letter, MappingDirection dir = MappingDirection.RightToLeft)
-        {
-            if (dir == MappingDirection.RightToLeft)
-                return _mapping[(letter - 'A' + _offset) % AlphabetLength];
-
-            return (char)('A' + ((_mapping.IndexOf(letter) - _offset + AlphabetLength) % AlphabetLength));
         }
 
         public bool IsNotch(char letter)

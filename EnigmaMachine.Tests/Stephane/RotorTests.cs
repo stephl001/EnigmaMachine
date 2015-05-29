@@ -22,6 +22,9 @@ namespace EnigmaMachine.Tests.Stephane
             {"VI", "JPGVOUMFYQBENHZRDKASXLICTW".ToCharArray()},
             {"VII", "NZJHGRCXMYSWBOUFAIVLPEKQDT".ToCharArray()},
             {"VIII", "FKQHTLXOCBJSPDZRAMEWNIUYGV".ToCharArray()},
+            {"Reflector A", "EJMZALYXVBWFCRQUONTSPIKHGD".ToCharArray()},
+            {"Reflector B", "YRUHQSLDPXNGOKMIEBFZCWVJAT".ToCharArray()},
+            {"Reflector C", "FVPJIAOYEDRZXWGCTKUQSBNMHL".ToCharArray()},
             {"ETW", AlphabetLetters}
         };
 
@@ -35,6 +38,9 @@ namespace EnigmaMachine.Tests.Stephane
             {"VI", "ZM".ToCharArray()},
             {"VII", "ZM".ToCharArray()},
             {"VIII", "ZM".ToCharArray()},
+            {"Reflector A", new char[] {}},
+            {"Reflector B", new char[] {}},
+            {"Reflector C", new char[] {}},
             {"ETW", new char[] {}}
         };
             

@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stephane\LetterMapper.cs" />
+    <Compile Include="Stephane\Plugboard.cs" />
     <Compile Include="Stephane\Rotor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
