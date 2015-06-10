@@ -52,7 +52,8 @@
   <ItemGroup>
     <Compile Include="Stephane\RotorTests.cs" />
     <Compile Include="Stephane\PlugboardTests.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="Stephane\EnigmaMachineTests.cs" />
+    <Compile Include="Stephane\SocketTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

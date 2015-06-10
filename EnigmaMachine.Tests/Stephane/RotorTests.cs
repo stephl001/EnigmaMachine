@@ -51,8 +51,13 @@ namespace EnigmaMachine.Tests.Stephane
             {
                 var rotor = Rotor.Create(kvp.Key);
                 IEnumerable<char> mappedLetters = AlphabetLetters.Select(letter => rotor.GetMappedLetter(letter));
-                Assert.IsTrue(kvp.Value.SequenceEqual(mappedLetters));    
+                Assert.IsTrue(SequencesOrderedEqual(kvp.Value, mappedLetters));    
             }
+        }
+
+        private static bool SequencesOrderedEqual(IEnumerable<char> seq1, IEnumerable<char> seq2)
+        {
+            return seq1.Zip(seq2, (c1, c2) => c1 == c2).All(b => b);
         }
 
         [TestMethod]
@@ -80,10 +85,19 @@ namespace EnigmaMachine.Tests.Stephane
             }
         }
 
+        
         [TestMethod]
         public void TestRotorRingSetting()
         {
-            LoopAllRotorsAndOffsets(TestRotorOffset);
+            //LoopAllRotorsAndOffsets(TestRotorOffset);
+            var rotorWithOffset = Rotor.Create("I");
+            Assert.AreEqual('E', rotorWithOffset.GetMappedLetter('A'));
+            Assert.AreEqual('A', rotorWithOffset.GetMappedLetter('E', LetterMapper.MappingDirection.LeftToRight));
+            rotorWithOffset = Rotor.Create("I", 'B');
+            Assert.AreEqual('K', rotorWithOffset.GetMappedLetter('A'));
+            Assert.AreEqual('A', rotorWithOffset.GetMappedLetter('K', LetterMapper.MappingDirection.LeftToRight));
+            Assert.AreEqual('F', rotorWithOffset.GetMappedLetter('B'));
+            Assert.AreEqual('B', rotorWithOffset.GetMappedLetter('F', LetterMapper.MappingDirection.LeftToRight));
         }
 
         private void LoopAllRotorsAndOffsets(Action<string, char> handler)
@@ -102,8 +116,11 @@ namespace EnigmaMachine.Tests.Stephane
             var rotorWithOffset = Rotor.Create(rotorType, offset);
 
             IEnumerable<char> newMapping = RotateLeft(ExpectedMappings[rotorType], offset - 'A');
-            IEnumerable<char> mappedLetters = AlphabetLetters.Select(letter => rotorWithOffset.GetMappedLetter(letter));
-            Assert.IsTrue(newMapping.SequenceEqual(mappedLetters));
+            IEnumerable<char> mappedLetters = AlphabetLetters.Select(letter => rotorWithOffset.GetMappedLetter(letter)).ToArray();
+            Assert.IsTrue(SequencesOrderedEqual(newMapping, mappedLetters));
+
+            var reverseSequence = mappedLetters.Select(letter => rotorWithOffset.GetMappedLetter(letter, LetterMapper.MappingDirection.LeftToRight));
+            Assert.IsTrue(SequencesOrderedEqual(reverseSequence, AlphabetLetters));
         }
 
         private IEnumerable<char> RotateLeft(char[] array, int steps)
@@ -127,9 +144,9 @@ namespace EnigmaMachine.Tests.Stephane
         {
             var rotor = Rotor.Create(rotorType, offset);
             IEnumerable<char> mappedLetters = AlphabetLetters.Select(l => rotor.GetMappedLetter(l)).ToArray();
-            IEnumerable<char> reversedLetters = mappedLetters.Select(l => rotor.GetMappedLetter(l, Rotor.MappingDirection.LeftToRight));
+            IEnumerable<char> reversedLetters = mappedLetters.Select(l => rotor.GetMappedLetter(l, LetterMapper.MappingDirection.LeftToRight));
 
-            Assert.IsTrue(AlphabetLetters.Zip(reversedLetters, (c1, c2) => c1 == c2).All(b => b));
+            Assert.IsTrue(SequencesOrderedEqual(AlphabetLetters, reversedLetters));
         }
     }
 }

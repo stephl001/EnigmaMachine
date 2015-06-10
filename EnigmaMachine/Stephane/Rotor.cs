@@ -15,8 +15,10 @@ namespace EnigmaMachine.Stephane
         public char[] Notches { get; private set; }
     }
 
-    public sealed class Rotor : LetterMapper
+    public class Rotor : LetterMapper
     {
+        private const int AlphabetLength = 26;
+
         private static readonly IDictionary<string, RotorDefinition> RotorDefinitions = new Dictionary<string, RotorDefinition>
         {
             {"I", new RotorDefinition("EKMFLGDQVZNTOWYHXUSPAIBRCJ", new [] {'Q'})},
@@ -34,11 +36,25 @@ namespace EnigmaMachine.Stephane
         };
 
         private readonly char[] _notches;
+        private readonly int _offset;
         
-        private Rotor(RotorDefinition def, char offset)
-            : base(def.Mappings, offset)
+        protected Rotor(RotorDefinition def, char offsetLetter)
+            : base(def.Mappings)
         {
             _notches = def.Notches;
+            _offset = offsetLetter - 'A';
+        }
+
+        public override char GetMappedLetter(char letter, MappingDirection dir = MappingDirection.RightToLeft)
+        {
+            if (dir == MappingDirection.RightToLeft)
+            {
+                char innerMapping = Mapping[letter.AddOffset(-_offset) - 'A'];
+                return innerMapping.AddOffset(_offset);
+            }
+
+            char innerInput = letter.AddOffset(-_offset);
+            return (char)(((Mapping.IndexOf(innerInput) + _offset) % AlphabetLength) + 'A');
         }
 
         public static Rotor Create(string type, char offset = 'A')
