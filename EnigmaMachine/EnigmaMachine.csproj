@@ -39,7 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IEnigmaMachine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RotorInfo.cs" />
     <Compile Include="Stephane\EnigmaMachine.cs" />
     <Compile Include="Stephane\EnigmaMachineExtensions.cs" />
     <Compile Include="Stephane\LetterExtensions.cs" />
