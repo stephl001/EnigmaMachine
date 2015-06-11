@@ -17,7 +17,7 @@ Scenario: Default Settings Encryption
 	When I enter the text: AAAAA
 	Then I get the following output: BDZGO
 	And the current letter position of Left rotor is A
-	And the current letter position of Center rotor is A
+	And the current letter position of Middle rotor is A
 	And the current letter position of Right rotor is F
 
 Scenario: Default Settings Decryption
@@ -31,7 +31,7 @@ Scenario: Default Settings Decryption
 	When I enter the text: BDZGO
 	Then I get the following output: AAAAA
 	And the current letter position of Left rotor is A
-	And the current letter position of Center rotor is A
+	And the current letter position of Middle rotor is A
 	And the current letter position of Right rotor is F
 
 Scenario: Stepping
@@ -44,7 +44,7 @@ Scenario: Stepping
 	And I use reflector B
 	When I enter the text: TEST
 	Then the current letter position of Left rotor is A
-	And the current letter position of Center rotor is B
+	And the current letter position of Middle rotor is B
 	And the current letter position of Right rotor is Z
 
 Scenario: Double Stepping
@@ -57,8 +57,8 @@ Scenario: Double Stepping
 	And I use reflector B
 	When I enter the text: COOKIE
 	Then the current letter position of Left rotor is B
-	And the current letter position of Center rotor is F
-	And the current letter position of Right rotor is U
+	Then the current letter position of Middle rotor is F
+	Then the current letter position of Right rotor is U
 
 Scenario: Plugboard
 	Given I use the following plugboard mappings
@@ -73,7 +73,7 @@ Scenario: Plugboard
 	| Right    | III  | A            | A                 |
 	And I use reflector B
 	When I enter the text: COOKIE
-	Then I get the following output: XBGSHD
+	Then I get the following output: QINHDT
 
 Scenario: Cannot Encode Letter Into Itself
 	Given I use an empty plugboard
