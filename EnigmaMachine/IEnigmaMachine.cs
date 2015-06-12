@@ -13,6 +13,7 @@ namespace EnigmaMachine
         void SetupRotors(RotorInfo[] rotorInfos);
         void SetupReflector(string type);
         char[] GetCurrentRotorRingLetters();
+        void SetCurrentRotorRingLetters(char[] letters);
         void ResetRotors();
     }
 }

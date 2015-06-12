@@ -11,14 +11,10 @@ namespace EnigmaMachine.Tests.Stephane
         public void TestDefaultSettings()
         {
             var machine = new MyEnigmaMachine();
-            Assert.IsNotNull(machine.Plugboard);
-            Assert.IsNotNull(machine.FastRotor);
-            Assert.IsNotNull(machine.MiddleRotor);
-            Assert.IsNotNull(machine.SlowRotor);
-            Assert.IsNotNull(machine.Reflector);
-            Assert.AreEqual('A', machine.FastRotor.CurrentRingLetter);
-            Assert.AreEqual('A', machine.MiddleRotor.CurrentRingLetter);
-            Assert.AreEqual('A', machine.SlowRotor.CurrentRingLetter);
+            char[] ringLetters = machine.GetCurrentRotorRingLetters();
+            Assert.AreEqual('A', ringLetters[2]);
+            Assert.AreEqual('A', ringLetters[1]);
+            Assert.AreEqual('A', ringLetters[0]);
         }
 
         [TestMethod]
@@ -26,22 +22,24 @@ namespace EnigmaMachine.Tests.Stephane
         {
             var machine = new MyEnigmaMachine();
             RepeatKey(machine, 'A', 26);
-            Assert.AreEqual('A', machine.FastRotor.CurrentRingLetter);
-            Assert.AreEqual('B', machine.MiddleRotor.CurrentRingLetter);
+            char[] ringLetters = machine.GetCurrentRotorRingLetters();
+            Assert.AreEqual('A', ringLetters[2]);
+            Assert.AreEqual('B', ringLetters[1]);
             RepeatKey(machine, 'A', 25*26);
-            Assert.AreEqual('B', machine.SlowRotor.CurrentRingLetter);
+            ringLetters = machine.GetCurrentRotorRingLetters();
+            Assert.AreEqual('B', ringLetters[0]);
         }
 
         [TestMethod]
         public void TestRotorsDoubleStepping()
         {
             var machine = new MyEnigmaMachine();
-            machine.MiddleRotor.SetRingLetter('D');
-            machine.FastRotor.SetRingLetter('O');
+            machine.SetCurrentRotorRingLetters(new [] {'A', 'D', 'O'});
             RepeatKey(machine, 'A', 6);
-            Assert.AreEqual('B', machine.SlowRotor.CurrentRingLetter);
-            Assert.AreEqual('F', machine.MiddleRotor.CurrentRingLetter);
-            Assert.AreEqual('U', machine.FastRotor.CurrentRingLetter);
+            char[] ringLetters = machine.GetCurrentRotorRingLetters();
+            Assert.AreEqual('B', ringLetters[0]);
+            Assert.AreEqual('F', ringLetters[1]);
+            Assert.AreEqual('U', ringLetters[2]);
         }
 
         [TestMethod]
@@ -53,7 +51,7 @@ namespace EnigmaMachine.Tests.Stephane
             {
                 machine.PressKey('A');
                 count++;
-            } while (machine.SlowRotor.CurrentRingLetter != 'A' || machine.MiddleRotor.CurrentRingLetter != 'A' || machine.FastRotor.CurrentRingLetter != 'A');
+            } while (machine.GetCurrentRotorRingLetters()[0] != 'A' || machine.GetCurrentRotorRingLetters()[1] != 'A' || machine.GetCurrentRotorRingLetters()[2] != 'A');
             
             Assert.AreEqual(26*26*25, count);
         }
@@ -65,10 +63,10 @@ namespace EnigmaMachine.Tests.Stephane
             var machine = new MyEnigmaMachine();
             string cypher = machine.Encrypt("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             Assert.AreEqual("FUVEPUMWARVQKEFGHGDIJFMFXI", cypher);
-            machine.Reset();
+            machine.ResetRotors();
             cypher = machine.Encrypt("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             Assert.AreEqual("FUVEPUMWARVQKEFGHGDIJFMFXI", cypher);
-            machine.Reset();
+            machine.ResetRotors();
             cypher = machine.Encrypt("FUVEPUMWARVQKEFGHGDIJFMFXI");
             Assert.AreEqual("ABCDEFGHIJKLMNOPQRSTUVWXYZ", cypher);
 
@@ -78,16 +76,13 @@ namespace EnigmaMachine.Tests.Stephane
         public void TestEncryptionRingStartingLettertSettings()
         {
             var machine = new MyEnigmaMachine();
-            machine.FastRotor.SetRingLetter('Q');
-            machine.MiddleRotor.SetRingLetter('R');
-            machine.SlowRotor.SetRingLetter('F');
-
+            machine.SetCurrentRotorRingLetters(new[] {'F', 'R', 'Q'});
             string cypher = machine.Encrypt("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             Assert.AreEqual("MHHKTNIROWJNYMNWKHMVEZQHWU", cypher);
-            machine.Reset();
+            machine.ResetRotors();
             cypher = machine.Encrypt("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             Assert.AreEqual("MHHKTNIROWJNYMNWKHMVEZQHWU", cypher);
-            machine.Reset();
+            machine.ResetRotors();
             cypher = machine.Encrypt("MHHKTNIROWJNYMNWKHMVEZQHWU");
             Assert.AreEqual("ABCDEFGHIJKLMNOPQRSTUVWXYZ", cypher);
 
@@ -97,16 +92,14 @@ namespace EnigmaMachine.Tests.Stephane
         public void TestEncryptionRingOffsetSettings()
         {
             var machine = new MyEnigmaMachine();
-            machine.FastRotor.SetupRotor(Rotor.Create("III", 'B'));
-            machine.MiddleRotor.SetupRotor(Rotor.Create("II", 'B'));
-            machine.SlowRotor.SetupRotor(Rotor.Create("I", 'B'));
+            machine.SetupRotors(new[] {new RotorInfo("I", 'A', 'B'), new RotorInfo("II", 'A', 'B'), new RotorInfo("III", 'A', 'B')});
             
             string cypher = machine.Encrypt("AAAAA");
             Assert.AreEqual("EWTYX", cypher);
-            machine.Reset();
+            machine.ResetRotors();
             cypher = machine.Encrypt("AAAAA");
             Assert.AreEqual("EWTYX", cypher);
-            machine.Reset();
+            machine.ResetRotors();
             cypher = machine.Encrypt("EWTYX");
             Assert.AreEqual("AAAAA", cypher);
         }
@@ -131,10 +124,8 @@ namespace EnigmaMachine.Tests.Stephane
         public void TestFullParameters()
         {
             var machine = new MyEnigmaMachine();
-            machine.FastRotor.SetupRotor(Rotor.Create("II", 'T'), 'W');
-            machine.MiddleRotor.SetupRotor(Rotor.Create("V", 'U'), 'C');
-            machine.SlowRotor.SetupRotor(Rotor.Create("IV", 'F'), 'M');
-            machine.Plugboard = new Plugboard("ABCKEFGHIJDLNMOPQRSTUZWXYV");
+            machine.SetupRotors(new[] { new RotorInfo("IV", 'M', 'F'), new RotorInfo("V", 'C', 'U'), new RotorInfo("II", 'W', 'T') });
+            machine.SetupPlugboard("ABCKEFGHIJDLNMOPQRSTUZWXYV");
             string cypher = machine.Encrypt("This is a test");
             Assert.AreEqual("Rmxe li c wmua", cypher);
         }
