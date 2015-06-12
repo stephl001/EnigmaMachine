@@ -1,4 +1,4 @@
-<<<<<<< Updated upstream
+﻿<<<<<<< Updated upstream
 ﻿using System.Linq;
 =======
 ﻿using System;

@@ -18,6 +18,11 @@
             _rotor = rotor;
         }
 
+        public void SetupRotor(RotorInfo rotorInfo)
+        {
+            SetupRotor(Rotor.Create(rotorInfo.Type, rotorInfo.RingSettingOffset), rotorInfo.StartingOffset);
+        }
+
         public void SetRingLetter(char letter)
         {
             CurrentRingLetter = _initialLetter = letter;
