@@ -1,16 +1,11 @@
-﻿<<<<<<< Updated upstream
-﻿using System.Linq;
-=======
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
->>>>>>> Stashed changes
 using System.Text;
-using EnigmaMachine.Stephane;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using EnigmaMachine;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TechTalk.SpecFlow;
-using TechTalk.SpecFlow.Assist;
-using MyEnigmaMachine = EnigmaMachine.Stephane.EnigmaMachine;
+﻿using MyEnigmaMachine = EnigmaMachine.Stephane.EnigmaMachine;
 
 namespace Enigma.Specs
 {
@@ -38,11 +33,8 @@ namespace Enigma.Specs
         }
         
         [Given(@"I have the following rotor combination")]
-        public void GivenIHaveTheFollowingRotorCombination(Table table)
+        public void GivenIHaveTheFollowingRotorCombination(IEnumerable<RotorInfo> rotorInfos)
         {
-<<<<<<< Updated upstream
-            var machine = (MyEnigmaMachine)ScenarioContext.Current["Machine"];
-=======
             LoopMachineImplementations(m => m.SetupRotors(rotorInfos.ToArray()));
         }
 
@@ -50,51 +42,35 @@ namespace Enigma.Specs
         public IEnumerable<RotorInfo> TableToRotorInfoTransform(Table table)
         {
             var rotorDefinitions = new RotorInfo[3];
->>>>>>> Stashed changes
             foreach (TableRow row in table.Rows)
             {
-                var rotor = Rotor.Create(row["Type"], row["Ring Setting"][0]);
-                RotorSocket socket = GetSocket(machine, row["Position"]);
-                socket.SetupRotor(rotor, row["Starting Position"][0]);
+                var rotorInfo = new RotorInfo(row["Type"], row["Starting Position"][0], row["Ring Setting"][0]);
+                if (row["Position"] == "Left")
+                    rotorDefinitions[0] = rotorInfo;
+                else if (row["Position"] == "Middle")
+                    rotorDefinitions[1] = rotorInfo;
+                else
+                    rotorDefinitions[2] = rotorInfo;
             }
-        }
 
-        private RotorSocket GetSocket(MyEnigmaMachine machine, string position)
-        {
-            if (position == "Left")
-                return machine.SlowRotor;
-            if (position == "Middle")
-                return machine.MiddleRotor;
-
-            return machine.FastRotor;
+            return rotorDefinitions;
         }
         
         [Given(@"I use reflector (A|B|C)")]
         public void GivenIUseReflector(string reflectorType)
         {
-<<<<<<< Updated upstream
-            var machine = (MyEnigmaMachine)ScenarioContext.Current["Machine"];
-            machine.Reflector.SetupRotor(Reflector.Create("Reflector " + reflectorType));
-=======
             LoopMachineImplementations(m => m.SetupReflector("Reflector " + reflectorType));
->>>>>>> Stashed changes
         }
         
         [When(@"I enter the text: ([A-Z]+)")]
         public void WhenIEnterTheText(string text)
         {
-<<<<<<< Updated upstream
-            var machine = (MyEnigmaMachine)ScenarioContext.Current["Machine"];
-            string cypher = machine.Encrypt(text);
-            ScenarioContext.Current.Add("CypherText", cypher);
-=======
             int index = 0;
             LoopMachineImplementations(m =>
             {
                 string cypher = m.Encrypt(text);
                 ScenarioContext.Current.Add("CypherText" + (index++), cypher);
             });
->>>>>>> Stashed changes
         }
         
         [Then(@"I get the following output: ([A-Z]+)")]
@@ -107,11 +83,6 @@ namespace Enigma.Specs
         [Then(@"the current letter position of (Left|Middle|Right) rotor is ([A-Z])")]
         public void ThenTheCurrentLetterPositionOfLeftRotorIs(string rotorPosition, char currentDisplayedLetter)
         {
-<<<<<<< Updated upstream
-            var machine = (MyEnigmaMachine)ScenarioContext.Current["Machine"];
-            RotorSocket socket = GetSocket(machine, rotorPosition);
-            Assert.AreEqual(currentDisplayedLetter, socket.CurrentRingLetter);
-=======
             LoopMachineImplementations(m =>
             {
                 char[] currentRingLetters = m.GetCurrentRotorRingLetters();
@@ -120,7 +91,6 @@ namespace Enigma.Specs
                     : ((rotorPosition == "Middle") ? currentRingLetters[1] : currentRingLetters[2]);
                 Assert.AreEqual(currentDisplayedLetter, currentLetter);
             });
->>>>>>> Stashed changes
         }
 
         [Given(@"I use the following plugboard mappings")]
@@ -135,21 +105,12 @@ namespace Enigma.Specs
                 mappings[to - 'A'] = from;
             }
 
-<<<<<<< Updated upstream
-            var machine = (MyEnigmaMachine)ScenarioContext.Current["Machine"];
-            machine.Plugboard = new Plugboard(new string(mappings));
-=======
             LoopMachineImplementations(m => m.SetupPlugboard(mappings));
->>>>>>> Stashed changes
         }
 
         [When(@"I press the letter ([A-Z]) repetidly until I reach the following rotor starting position")]
         public void WhenIPressTheLetterRepetidlyUntilIReachTheFollowingRotorStartingPosition(char letter, Table table)
         {
-<<<<<<< Updated upstream
-            var machine = (MyEnigmaMachine)ScenarioContext.Current["Machine"];
-=======
->>>>>>> Stashed changes
             char leftRotorLetter = GetRotorStartingPosition(table, "Left");
             char middleRotorLetter = GetRotorStartingPosition(table, "Middle");
             char rightRotorLetter = GetRotorStartingPosition(table, "Right");
@@ -157,18 +118,11 @@ namespace Enigma.Specs
             int index = 0;
             LoopMachineImplementations(m =>
             {
-<<<<<<< Updated upstream
-                sb.Append(machine.PressKey(letter));
-            } while ((machine.SlowRotor.CurrentRingLetter != leftRotorLetter) ||
-                     (machine.MiddleRotor.CurrentRingLetter != middleRotorLetter) ||
-                     (machine.FastRotor.CurrentRingLetter != rightRotorLetter));
-=======
                 var sb = new StringBuilder();
                 do
                 {
                     sb.Append(m.PressKey(letter));
                 } while (!m.GetCurrentRotorRingLetters().SequenceEqual(new[] { leftRotorLetter, middleRotorLetter, rightRotorLetter }));
->>>>>>> Stashed changes
 
                 ScenarioContext.Current["CypherText" + (index++)] = sb.ToString();
             });
@@ -198,6 +152,81 @@ namespace Enigma.Specs
             {
                 var cypher = (string)ScenarioContext.Current["CypherText" + (index++)];
                 Assert.AreEqual(length, cypher.ToCharArray().Distinct().Count());
+            });
+        }
+
+        private static readonly Random Random = new Random();
+
+        [Given(@"I use a random plugboard")]
+        public void GivenIUseARandomPlugboard()
+        {
+            string mapping = GenerateRandomMapping();
+            LoopMachineImplementations(m => m.SetupPlugboard(mapping));
+        }
+
+        private static string GenerateRandomMapping()
+        {
+            char[] mapping = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            int connections = Random.Next(0, 14);
+            var availablePositions = new List<int> {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
+            for (int i = 0; i < connections; i++)
+            {
+                int randomPos1 = availablePositions[Random.Next(availablePositions.Count)];
+                availablePositions.Remove(randomPos1);
+                int randomPos2 = availablePositions[Random.Next(availablePositions.Count)];
+                availablePositions.Remove(randomPos2);
+
+                char tmp = mapping[randomPos1];
+                mapping[randomPos1] = mapping[randomPos2];
+                mapping[randomPos2] = tmp;
+            }
+
+            return new string(mapping);
+        }
+
+        [Given(@"I have a random rotor combination")]
+        public void GivenIHaveARandomRotorCombination()
+        {
+            var rotorInfos = new []
+            {
+                new RotorInfo(GetRandomRotorType(), GetRandomLetter(), GetRandomLetter()),
+                new RotorInfo(GetRandomRotorType(), GetRandomLetter(), GetRandomLetter()),
+                new RotorInfo(GetRandomRotorType(), GetRandomLetter(), GetRandomLetter())
+            };
+            LoopMachineImplementations(m => m.SetupRotors(rotorInfos));
+        }
+
+        private static readonly string[] AvailableRotorTypes = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII"};
+        private string GetRandomRotorType()
+        {
+            return AvailableRotorTypes[Random.Next(AvailableRotorTypes.Length)];
+        }
+
+        private static char GetRandomLetter(char minLetter = 'A', char maxLetter = 'Z')
+        {
+            return (char)(Random.Next(maxLetter - minLetter + 1) + minLetter);
+        }
+
+        [Given(@"I use a random reflector")]
+        public void GivenIUseARandomReflector()
+        {
+            string type = ("Reflector " + GetRandomLetter('A', 'C'));
+            LoopMachineImplementations(m => m.SetupReflector(type));
+        }
+
+        [When(@"I reset the machine")]
+        public void WhenIResetTheMachine()
+        {
+            LoopMachineImplementations(m => m.ResetRotors());
+        }
+
+        [When(@"I enter the previously encrypted text")]
+        public void WhenIEnterThePreviouslyEncryptedText()
+        {
+            int index = 0;
+            LoopMachineImplementations(m =>
+            {
+                ScenarioContext.Current["CypherText" + (index)] = m.Encrypt((string)ScenarioContext.Current["CypherText" + (index++)]);
             });
         }
     }

@@ -92,3 +92,12 @@ Scenario: Cannot Encode Letter Into Itself
 	| Right    | A                 |
 	Then the distinct letters of the output must not contain the letter A
 	And the distinct letters of the output must have a length of 25
+
+Scenario: Encryption and Decryption
+	Given I use a random plugboard
+	And I have a random rotor combination
+	And I use a random reflector
+	When I enter the text: HELLOWORLD
+	And I reset the machine
+	And I enter the previously encrypted text
+	Then I get the following output: HELLOWORLD
