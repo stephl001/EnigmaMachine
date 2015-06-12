@@ -229,5 +229,42 @@ namespace Enigma.Specs
                 ScenarioContext.Current["CypherText" + (index)] = m.Encrypt((string)ScenarioContext.Current["CypherText" + (index++)]);
             });
         }
+
+        [When(@"I enter a random text into the machine")]
+        public void WhenIEnterARandomTextIntoTheMachine()
+        {
+            int randomLength = Random.Next(100, 5000);
+            string randomString = GenerateRandomString(randomLength);
+            int index = 0;
+            LoopMachineImplementations(m =>
+            {
+                ScenarioContext.Current["CypherText" + (index++)] = m.Encrypt(randomString);
+            });
+        }
+
+        private string GenerateRandomString(int randomLength)
+        {
+            IEnumerable<char> randomLetters = GenerateRandomLetters(randomLength);
+            return new string(randomLetters.ToArray());
+        }
+
+        private IEnumerable<char> GenerateRandomLetters(int randomLength)
+        {
+            for (int i = 0; i < randomLength; i++)
+            {
+                yield return (char) (Random.Next(26) + 'A');
+            }
+        }
+
+        [Then(@"all Enigma implementations should encrypt and decrypt the exact same thing")]
+        public void ThenAllEnigmaImplementationsShouldEncryptAndDecryptTheExactSameThing()
+        {
+            var cyphers = new List<string>();
+            int index = 0;
+            LoopMachineImplementations(m => cyphers.Add((string)ScenarioContext.Current["CypherText" + (index++)]));
+
+            string first = cyphers.First();
+            Assert.IsTrue(cyphers.TrueForAll(s => s == first));
+        }
     }
 }

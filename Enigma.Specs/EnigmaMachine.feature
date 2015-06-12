@@ -101,3 +101,11 @@ Scenario: Encryption and Decryption
 	And I reset the machine
 	And I enter the previously encrypted text
 	Then I get the following output: HELLOWORLD
+
+Scenario: All Implementations Should Encrypt/Decrypt The Same Way
+	Given I use a random plugboard
+	And I have a random rotor combination
+	And I use a random reflector
+	When I enter a random text into the machine
+	Then all Enigma implementations should encrypt and decrypt the exact same thing
+	

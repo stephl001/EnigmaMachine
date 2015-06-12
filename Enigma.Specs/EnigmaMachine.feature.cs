@@ -430,6 +430,30 @@ this.FeatureBackground();
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("All Implementations Should Encrypt/Decrypt The Same Way")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "EnigmaMachine")]
+        public virtual void AllImplementationsShouldEncryptDecryptTheSameWay()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("All Implementations Should Encrypt/Decrypt The Same Way", ((string[])(null)));
+#line 105
+this.ScenarioSetup(scenarioInfo);
+#line 6
+this.FeatureBackground();
+#line 106
+ testRunner.Given("I use a random plugboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 107
+ testRunner.And("I have a random rotor combination", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 108
+ testRunner.And("I use a random reflector", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 109
+ testRunner.When("I enter a random text into the machine", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 110
+ testRunner.Then("all Enigma implementations should encrypt and decrypt the exact same thing", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
