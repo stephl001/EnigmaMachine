@@ -4,7 +4,9 @@
 	I want to be able to encrypt messages before sending them
 
 Background:
-	Given I use an Enigma machine model M3
+	Given I test the following Enigma Machine implementations
+	| Author            | Type                                                |
+	| Stephane Larocque | EnigmaMachine.Stephane.EnigmaMachine, EnigmaMachine |
 	
 Scenario: Default Settings Encryption
 	Given I use an empty plugboard
