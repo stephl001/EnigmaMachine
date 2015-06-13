@@ -15,7 +15,7 @@ namespace Enigma.Specs
         [Given(@"I test the following Enigma Machine implementations")]
         public void GivenITestTheFollowingEnigmaMachineImplementations(Table table)
         {
-            IEnigmaMachine[] allMachines = table.Rows.Select(tr => Activator.CreateInstance(Type.GetType(tr["Type"], true), null)).Cast<IEnigmaMachine>().ToArray();
+            IDictionary<string,IEnigmaMachine> allMachines = table.Rows.ToDictionary(tr => tr["Author"], tr => (IEnigmaMachine)Activator.CreateInstance(Type.GetType(tr["Type"], true), null));
             ScenarioContext.Current["Machines"] = allMachines;
         }
 
@@ -25,17 +25,17 @@ namespace Enigma.Specs
         {
         }
 
-        private void LoopMachineImplementations(Action<IEnigmaMachine> handler)
+        private void LoopMachineImplementations(Action<string,IEnigmaMachine> handler)
         {
-            var allMachines = (IEnigmaMachine[])ScenarioContext.Current["Machines"];
-            foreach (IEnigmaMachine machine in allMachines)
-                handler(machine);
+            var allMachines = (IDictionary<string, IEnigmaMachine>)ScenarioContext.Current["Machines"];
+            foreach (var machineEntry in allMachines)
+                handler(machineEntry.Key, machineEntry.Value);
         }
         
         [Given(@"I have the following rotor combination")]
         public void GivenIHaveTheFollowingRotorCombination(IEnumerable<RotorInfo> rotorInfos)
         {
-            LoopMachineImplementations(m => m.SetupRotors(rotorInfos.ToArray()));
+            LoopMachineImplementations((a,m) => m.SetupRotors(rotorInfos.ToArray()));
         }
 
         [StepArgumentTransformation]
@@ -59,31 +59,29 @@ namespace Enigma.Specs
         [Given(@"I use reflector (A|B|C)")]
         public void GivenIUseReflector(string reflectorType)
         {
-            LoopMachineImplementations(m => m.SetupReflector("Reflector " + reflectorType));
+            LoopMachineImplementations((a,m) => m.SetupReflector("Reflector " + reflectorType));
         }
         
         [When(@"I enter the text: ([A-Z]+)")]
         public void WhenIEnterTheText(string text)
         {
-            int index = 0;
-            LoopMachineImplementations(m =>
+            LoopMachineImplementations((a,m) =>
             {
                 string cypher = m.Encrypt(text);
-                ScenarioContext.Current.Add("CypherText" + (index++), cypher);
+                ScenarioContext.Current.Add("CypherText<" + a + ">", cypher);
             });
         }
         
         [Then(@"I get the following output: ([A-Z]+)")]
         public void ThenIGetTheFollowingOutput(string output)
         {
-            int index = 0;
-            LoopMachineImplementations(m => Assert.AreEqual(output, ScenarioContext.Current["CypherText" + (index++)]));
+            LoopMachineImplementations((a,m) => Assert.AreEqual(output, ScenarioContext.Current["CypherText<" + a + ">"]));
         }
 
         [Then(@"the current letter position of (Left|Middle|Right) rotor is ([A-Z])")]
         public void ThenTheCurrentLetterPositionOfLeftRotorIs(string rotorPosition, char currentDisplayedLetter)
         {
-            LoopMachineImplementations(m =>
+            LoopMachineImplementations((a,m) =>
             {
                 char[] currentRingLetters = m.GetCurrentRotorRingLetters();
                 char currentLetter = (rotorPosition == "Left")
@@ -105,7 +103,7 @@ namespace Enigma.Specs
                 mappings[to - 'A'] = from;
             }
 
-            LoopMachineImplementations(m => m.SetupPlugboard(mappings));
+            LoopMachineImplementations((a,m) => m.SetupPlugboard(mappings));
         }
 
         [When(@"I press the letter ([A-Z]) repetidly until I reach the following rotor starting position")]
@@ -115,8 +113,7 @@ namespace Enigma.Specs
             char middleRotorLetter = GetRotorStartingPosition(table, "Middle");
             char rightRotorLetter = GetRotorStartingPosition(table, "Right");
 
-            int index = 0;
-            LoopMachineImplementations(m =>
+            LoopMachineImplementations((a,m) =>
             {
                 var sb = new StringBuilder();
                 do
@@ -124,7 +121,7 @@ namespace Enigma.Specs
                     sb.Append(m.PressKey(letter));
                 } while (!m.GetCurrentRotorRingLetters().SequenceEqual(new[] { leftRotorLetter, middleRotorLetter, rightRotorLetter }));
 
-                ScenarioContext.Current["CypherText" + (index++)] = sb.ToString();
+                ScenarioContext.Current["CypherText<" + a + ">"] = sb.ToString();
             });
         }
 
@@ -136,10 +133,9 @@ namespace Enigma.Specs
         [Then(@"the distinct letters of the output must not contain the letter ([A-Z])")]
         public void ThenTheDistinctLettersOfTheOutputMustNotContainTheLetter(char letter)
         {
-            int index = 0;
-            LoopMachineImplementations(m =>
+            LoopMachineImplementations((a,m) =>
             {
-                var cypher = (string)ScenarioContext.Current["CypherText" + (index++)];
+                var cypher = (string)ScenarioContext.Current["CypherText<" + a + ">"];
                 Assert.IsFalse(cypher.ToCharArray().Distinct().Contains(letter));
             });
         }
@@ -147,10 +143,9 @@ namespace Enigma.Specs
         [Then(@"the distinct letters of the output must have a length of (\d+)")]
         public void ThenTheDistinctLettersOfTheOutputMustHaveALengthOf(int length)
         {
-            int index = 0;
-            LoopMachineImplementations(m =>
+            LoopMachineImplementations((a,m) =>
             {
-                var cypher = (string)ScenarioContext.Current["CypherText" + (index++)];
+                var cypher = (string)ScenarioContext.Current["CypherText<" + a + ">"];
                 Assert.AreEqual(length, cypher.ToCharArray().Distinct().Count());
             });
         }
@@ -161,7 +156,7 @@ namespace Enigma.Specs
         public void GivenIUseARandomPlugboard()
         {
             string mapping = GenerateRandomMapping();
-            LoopMachineImplementations(m => m.SetupPlugboard(mapping));
+            LoopMachineImplementations((a,m) => m.SetupPlugboard(mapping));
         }
 
         private static string GenerateRandomMapping()
@@ -193,7 +188,7 @@ namespace Enigma.Specs
                 new RotorInfo(GetRandomRotorType(), GetRandomLetter(), GetRandomLetter()),
                 new RotorInfo(GetRandomRotorType(), GetRandomLetter(), GetRandomLetter())
             };
-            LoopMachineImplementations(m => m.SetupRotors(rotorInfos));
+            LoopMachineImplementations((a,m) => m.SetupRotors(rotorInfos));
         }
 
         private static readonly string[] AvailableRotorTypes = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII"};
@@ -211,22 +206,21 @@ namespace Enigma.Specs
         public void GivenIUseARandomReflector()
         {
             string type = ("Reflector " + GetRandomLetter('A', 'C'));
-            LoopMachineImplementations(m => m.SetupReflector(type));
+            LoopMachineImplementations((a,m) => m.SetupReflector(type));
         }
 
         [When(@"I reset the machine")]
         public void WhenIResetTheMachine()
         {
-            LoopMachineImplementations(m => m.ResetRotors());
+            LoopMachineImplementations((a,m) => m.ResetRotors());
         }
 
         [When(@"I enter the previously encrypted text")]
         public void WhenIEnterThePreviouslyEncryptedText()
         {
-            int index = 0;
-            LoopMachineImplementations(m =>
+            LoopMachineImplementations((a,m) =>
             {
-                ScenarioContext.Current["CypherText" + (index)] = m.Encrypt((string)ScenarioContext.Current["CypherText" + (index++)]);
+                ScenarioContext.Current["CypherText<" + a + ">"] = m.Encrypt((string)ScenarioContext.Current["CypherText<" + a + ">"]);
             });
         }
 
@@ -235,10 +229,10 @@ namespace Enigma.Specs
         {
             int randomLength = Random.Next(100, 5000);
             string randomString = GenerateRandomString(randomLength);
-            int index = 0;
-            LoopMachineImplementations(m =>
+            
+            LoopMachineImplementations((a,m) =>
             {
-                ScenarioContext.Current["CypherText" + (index++)] = m.Encrypt(randomString);
+                ScenarioContext.Current["CypherText<" + a + ">"] = m.Encrypt(randomString);
             });
         }
 
@@ -259,12 +253,18 @@ namespace Enigma.Specs
         [Then(@"all Enigma implementations should encrypt and decrypt the exact same thing")]
         public void ThenAllEnigmaImplementationsShouldEncryptAndDecryptTheExactSameThing()
         {
-            var cyphers = new List<string>();
-            int index = 0;
-            LoopMachineImplementations(m => cyphers.Add((string)ScenarioContext.Current["CypherText" + (index++)]));
+            string first = null;
+            LoopMachineImplementations((a, m) =>
+            {
+                var cypher = (string) ScenarioContext.Current["CypherText<" + a + ">"];
+                if (first == null)
+                {
+                    first = cypher;
+                    return;
+                }
 
-            string first = cyphers.First();
-            Assert.IsTrue(cyphers.TrueForAll(s => s == first));
+                Assert.AreEqual(first, cypher, "Encryption was wrong from machine by " + a + ".");
+            });
         }
     }
 }

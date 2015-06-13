@@ -7,7 +7,8 @@ Background:
 	Given I test the following Enigma Machine implementations
 	| Author            | Type                                                |
 	| Stephane Larocque | EnigmaMachine.Stephane.EnigmaMachine, EnigmaMachine |
-	
+#	| <author>          | <Your type implementing IEnigmaMachine>             |
+
 Scenario: Default Settings Encryption
 	Given I use an empty plugboard
 	And I have the following rotor combination
