@@ -68,6 +68,7 @@ namespace Enigma.Specs
             LoopMachineImplementations((a,m) =>
             {
                 string cypher = m.Encrypt(text);
+                Assert.AreNotEqual(cypher, text);
                 ScenarioContext.Current.Add("CypherText<" + a + ">", cypher);
             });
         }
