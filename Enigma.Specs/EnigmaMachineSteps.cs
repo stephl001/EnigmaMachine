@@ -233,7 +233,9 @@ namespace Enigma.Specs
             
             LoopMachineImplementations((a,m) =>
             {
-                ScenarioContext.Current["CypherText<" + a + ">"] = m.Encrypt(randomString);
+                string cypher = m.Encrypt(randomString);
+                Assert.AreNotEqual(cypher, randomString, "Machine from author <" + a + "> did not encrypt properly.");
+                ScenarioContext.Current["CypherText<" + a + ">"] = cypher;
             });
         }
 
@@ -264,7 +266,7 @@ namespace Enigma.Specs
                     return;
                 }
 
-                Assert.AreEqual(first, cypher, "Encryption was wrong from machine by " + a + ".");
+                Assert.AreEqual(first, cypher, "Encryption was wrong from machine by <" + a + ">.");
             });
         }
     }
