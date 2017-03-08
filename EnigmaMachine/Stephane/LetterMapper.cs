@@ -13,7 +13,7 @@
             Mapping = mapping;
         }
 
-        protected string Mapping { get; private set; }
+        protected string Mapping { get; }
 
         public virtual char GetMappedLetter(char letter, MappingDirection dir = MappingDirection.RightToLeft)
         {

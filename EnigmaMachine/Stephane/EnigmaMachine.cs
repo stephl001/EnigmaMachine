@@ -15,11 +15,11 @@ namespace EnigmaMachine.Stephane
 
         private Plugboard _plugboard;
 
-        private readonly RotorSocket _fastRotor;
-        private readonly RotorSocket _middleRotor;
-        private readonly RotorSocket _slowRotor;
+        private RotorSocket _fastRotor;
+        private RotorSocket _middleRotor;
+        private RotorSocket _slowRotor;
 
-        private readonly RotorSocket _reflector;
+        private RotorSocket _reflector;
 
         public char PressKey(char key)
         {
@@ -49,12 +49,12 @@ namespace EnigmaMachine.Stephane
             if (_middleRotor.IsSocketInNotchPosition)
             {
                 slowRotorIncremented = true;
-                _slowRotor.Advance();
+                _slowRotor = _slowRotor.Advance();
             }
             if (_fastRotor.IsSocketInNotchPosition || slowRotorIncremented)
-                _middleRotor.Advance();
-            
-            _fastRotor.Advance();
+                _middleRotor = _middleRotor.Advance();
+
+            _fastRotor = _fastRotor.Advance();
         }
 
 
@@ -65,14 +65,14 @@ namespace EnigmaMachine.Stephane
 
         public void SetupRotors(RotorInfo[] rotorInfos)
         {
-            _slowRotor.SetupRotor(rotorInfos[0]);
-            _middleRotor.SetupRotor(rotorInfos[1]);
-            _fastRotor.SetupRotor(rotorInfos[2]);
+            _slowRotor = _slowRotor.SetupRotor(rotorInfos[0]);
+            _middleRotor = _middleRotor.SetupRotor(rotorInfos[1]);
+            _fastRotor = _fastRotor.SetupRotor(rotorInfos[2]);
         }
 
         public void SetupReflector(string type)
         {
-            _reflector.SetupRotor(ReflectorClass.Create(type));
+            _reflector = _reflector.SetupRotor(ReflectorClass.Create(type));
         }
 
         public char[] GetCurrentRotorRingLetters()
@@ -80,18 +80,18 @@ namespace EnigmaMachine.Stephane
             return new[] { _slowRotor.CurrentRingLetter, _middleRotor.CurrentRingLetter, _fastRotor.CurrentRingLetter };
         }
 
-        public void SetCurrentRotorRingLetters(char[] letters)
+        public void SetStartupRotorRingLetters(char[] letters)
         {
-            _slowRotor.SetRingLetter(letters[0]);
-            _middleRotor.SetRingLetter(letters[1]);
-            _fastRotor.SetRingLetter(letters[2]);
+            _slowRotor = _slowRotor.SetStartingRingLetter(letters[0]);
+            _middleRotor = _middleRotor.SetStartingRingLetter(letters[1]);
+            _fastRotor = _fastRotor.SetStartingRingLetter(letters[2]);
         }
 
         public void ResetRotors()
         {
-            _fastRotor.Reset();
-            _middleRotor.Reset();
-            _slowRotor.Reset();
+            _fastRotor = _fastRotor.Reset();
+            _middleRotor = _middleRotor.Reset();
+            _slowRotor = _slowRotor.Reset();
         }
     }
 }

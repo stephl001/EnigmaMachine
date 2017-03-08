@@ -34,7 +34,7 @@ namespace EnigmaMachine.Tests.Stephane
         public void TestRotorsDoubleStepping()
         {
             var machine = new MyEnigmaMachine();
-            machine.SetCurrentRotorRingLetters(new [] {'A', 'D', 'O'});
+            machine.SetStartupRotorRingLetters(new [] {'A', 'D', 'O'});
             RepeatKey(machine, 'A', 6);
             char[] ringLetters = machine.GetCurrentRotorRingLetters();
             Assert.AreEqual('B', ringLetters[0]);
@@ -73,10 +73,10 @@ namespace EnigmaMachine.Tests.Stephane
         }
 
         [TestMethod]
-        public void TestEncryptionRingStartingLettertSettings()
+        public void TestEncryptionRingStartingLetterSettings()
         {
             var machine = new MyEnigmaMachine();
-            machine.SetCurrentRotorRingLetters(new[] {'F', 'R', 'Q'});
+            machine.SetStartupRotorRingLetters(new[] {'F', 'R', 'Q'});
             string cypher = machine.Encrypt("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             Assert.AreEqual("MHHKTNIROWJNYMNWKHMVEZQHWU", cypher);
             machine.ResetRotors();

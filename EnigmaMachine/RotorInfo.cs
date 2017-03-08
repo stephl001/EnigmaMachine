@@ -9,8 +9,8 @@
             StartingOffset = startingOffset;
         }
 
-        public string Type { get; private set; }
-        public char RingSettingOffset { get; private set; }
-        public char StartingOffset { get; private set; }
+        public string Type { get; }
+        public char RingSettingOffset { get; }
+        public char StartingOffset { get; }
     }
 }

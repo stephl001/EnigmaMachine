@@ -11,8 +11,8 @@ namespace EnigmaMachine.Stephane
             Notches = notches;
         }
 
-        public string Mappings { get; private set; }
-        public char[] Notches { get; private set; }
+        public string Mappings { get; }
+        public char[] Notches { get; }
     }
 
     public class Rotor : LetterMapper

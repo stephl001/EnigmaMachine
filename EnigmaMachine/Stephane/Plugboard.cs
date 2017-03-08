@@ -1,6 +1,6 @@
 ﻿namespace EnigmaMachine.Stephane
 {
-    public class Plugboard : LetterMapper
+    public sealed class Plugboard : LetterMapper
     {
         private const string DefaultMappings = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

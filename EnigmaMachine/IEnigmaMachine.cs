@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EnigmaMachine
+﻿namespace EnigmaMachine
 {
     public interface IEnigmaMachine
     {
@@ -13,7 +7,7 @@ namespace EnigmaMachine
         void SetupRotors(RotorInfo[] rotorInfos);
         void SetupReflector(string type);
         char[] GetCurrentRotorRingLetters();
-        void SetCurrentRotorRingLetters(char[] letters);
+        void SetStartupRotorRingLetters(char[] letters);
         void ResetRotors();
     }
 }

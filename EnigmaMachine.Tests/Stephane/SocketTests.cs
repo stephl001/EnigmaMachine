@@ -12,12 +12,12 @@ namespace EnigmaMachine.Tests.Stephane
         {
             var socket = new RotorSocket(Rotor.Create("I"));
             Assert.AreEqual('A', socket.CurrentRingLetter);
-            socket.Advance();
+            socket = socket.Advance();
             Assert.AreEqual('B', socket.CurrentRingLetter);
-            socket.Reset();
+            socket = socket.Reset();
             Assert.AreEqual('A', socket.CurrentRingLetter);
             for (int i=0; i<26; i++)
-                socket.Advance();
+                socket = socket.Advance();
             Assert.AreEqual('A', socket.CurrentRingLetter);
         }
 
@@ -30,7 +30,7 @@ namespace EnigmaMachine.Tests.Stephane
 
             //If for example rotor I is in the B-position, an A enters at the letter B 
             //which is wired to the K. Because of the offset this K enters the next rotor in the J position.
-            socket.Advance();
+            socket = socket.Advance();
             Assert.AreEqual('J', socket.GetMappedLetter('A'));
             Assert.AreEqual('A', socket.GetMappedLetter('J', LetterMapper.MappingDirection.LeftToRight));
         }
@@ -41,7 +41,7 @@ namespace EnigmaMachine.Tests.Stephane
             var socket = new RotorSocket(Rotor.Create("I", 'B'));
             Assert.AreEqual('K', socket.GetMappedLetter('A'));
             Assert.AreEqual('A', socket.GetMappedLetter('K', LetterMapper.MappingDirection.LeftToRight));
-            socket.Advance();
+            socket = socket.Advance();
             Assert.AreEqual('E', socket.GetMappedLetter('A'));
             Assert.AreEqual('A', socket.GetMappedLetter('E', LetterMapper.MappingDirection.LeftToRight));
         }
@@ -51,7 +51,7 @@ namespace EnigmaMachine.Tests.Stephane
         {
             var socket = new RotorSocket(Rotor.Create("I"));
             while (!socket.IsSocketInNotchPosition)
-                socket.Advance();
+                socket = socket.Advance();
             Assert.AreEqual('Q', socket.CurrentRingLetter);
         }
     }

@@ -2,35 +2,47 @@
 {
     public sealed class RotorSocket
     {
-        private char _initialLetter;
-        private Rotor _rotor;
+        private readonly char _initialLetter;
+        private readonly Rotor _rotor;
 
         public RotorSocket(Rotor rotor, char startingLetter = 'A')
+            : this(rotor, startingLetter, startingLetter)
         {
-            SetupRotor(rotor, startingLetter);
         }
 
-        public char CurrentRingLetter { get; private set; }
-
-        public void SetupRotor(Rotor rotor, char startingLetter = 'A')
+        private RotorSocket(Rotor rotor, char currentLetter, char startingLetter)
         {
-            SetRingLetter(startingLetter);
             _rotor = rotor;
+            _initialLetter = startingLetter;
+            CurrentRingLetter = currentLetter;
+            IsSocketInNotchPosition = _rotor.IsNotch(currentLetter);
         }
 
-        public void SetupRotor(RotorInfo rotorInfo)
+        public char CurrentRingLetter { get; }
+
+        public RotorSocket SetupRotor(Rotor rotor, char startingLetter = 'A')
         {
-            SetupRotor(Rotor.Create(rotorInfo.Type, rotorInfo.RingSettingOffset), rotorInfo.StartingOffset);
+            return new RotorSocket(rotor, startingLetter);
         }
 
-        public void SetRingLetter(char letter)
+        public RotorSocket SetupRotor(RotorInfo rotorInfo)
         {
-            CurrentRingLetter = _initialLetter = letter;
+            return SetupRotor(Rotor.Create(rotorInfo.Type, rotorInfo.RingSettingOffset), rotorInfo.StartingOffset);
         }
 
-        public void Advance()
+        public RotorSocket SetRingLetter(char letter)
         {
-            CurrentRingLetter = IncrementLetter(CurrentRingLetter);
+            return new RotorSocket(_rotor, letter, _initialLetter);
+        }
+
+        public RotorSocket SetStartingRingLetter(char letter)
+        {
+            return new RotorSocket(_rotor, letter);
+        }
+
+        public RotorSocket Advance()
+        {
+            return SetRingLetter(IncrementLetter(CurrentRingLetter));
         }
 
         private char IncrementLetter(char letter)
@@ -38,9 +50,9 @@
             return letter.AddOffset(1);
         }
 
-        public void Reset()
+        public RotorSocket Reset()
         {
-            CurrentRingLetter = _initialLetter;
+            return SetRingLetter(_initialLetter);
         }
 
         public char GetMappedLetter(char letter, LetterMapper.MappingDirection direction = LetterMapper.MappingDirection.RightToLeft)
@@ -61,9 +73,6 @@
             return letter.RemoveOffset(CurrentRingLetter);
         }
 
-        public bool IsSocketInNotchPosition
-        {
-            get { return _rotor.IsNotch(CurrentRingLetter); }
-        }
+        public bool IsSocketInNotchPosition { get; }
     }
 }
